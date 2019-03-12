@@ -1,0 +1,11 @@
+.dashboard{
+    display: flex;
+    .left-sidebar{
+        background-color: $color_222;
+        padding: 30px;
+        .link{
+            color: #fff;
+            text-decoration: none;
+        }
+    }
+}
