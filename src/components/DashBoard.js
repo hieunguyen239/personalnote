@@ -6,6 +6,7 @@ import Tags from './Pages/Tags';
 import Trash from './Pages/Trash';
 import SearchResult from './Pages/SearchResults';
 import NotFound from './Pages/NotFound';
+import AllNote from './Pages/AllNotes';
 
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import {NavLink} from 'react-router-dom';
@@ -42,6 +43,7 @@ class DashBoard extends Component{
                         <Switch>
                             <Route exact path='/' component={Home}/>
                             <Route path='/create-new-note' component={NewNote} />
+                            <Route path='/all-notes' component={AllNote} />
                             <Route path='/tags' component={Tags} />
                             <Route path='/trash' component={Trash} />
                             <Route path='/search' component={SearchResult} />
