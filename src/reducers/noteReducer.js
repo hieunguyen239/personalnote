@@ -1,9 +1,15 @@
-const initialState = {};
+import getNotes from '../actions/getnotes_action';
+import * as type from '../constants/action-types';
+
+const initialState = {
+    is_busy: false,
+    notes: []
+};
 
 export default function note_reducer(state = initialState, action){
     switch(action.type){
-        case '1':
-        return 1;
+        case type.GET_NOTES:
+        return Object.assign({}, state, action.payload);
         default:
         return state;
     }

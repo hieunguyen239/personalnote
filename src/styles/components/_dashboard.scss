@@ -46,16 +46,15 @@ h1 {
         .navbar {
             ul {
                 display: block;
+                li{
+                    padding: 10px;
+                    &:hover{
+                        background-color: #404040;
+                        transition: 0.5s ease;
+                    }
+                }
             }
 
-            ul li {
-                padding: 10px;
-            }
-
-            ul li:hover {
-                background-color: #404040;
-                transition: 0.5s ease;
-            }
 
             .nav-item {
                 display: flex;

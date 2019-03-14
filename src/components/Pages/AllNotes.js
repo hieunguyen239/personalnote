@@ -1,45 +1,63 @@
 import React, {Component} from 'react';
+import axios from 'axios';
+import getNotes from '../../actions/getnotes_action';
+import { connect } from 'react-redux';
 
-class AllNote extends Component{
+class AllNotes extends Component{
 
     constructor(props){
         super(props);
     }
 
-    componentDidMount(){
-        fetch("http://localhost:3001/api/getData")
-            .then(data => data.json())
-            .then(res => console.log(res));
+    componentWillMount(){
+
     }
 
+    fetchNotes(){
+        axios.get("http://localhost:3001/api/getData")
+        .then(res => {
+            let notes = res.data;
+            let is_busy = false;
+            this.props.getNotes({is_busy, notes});
+        });
+    }
+
+    componentDidMount(){
+       this.fetchNotes();
+    }
+
+
     render(){
+        let notes = this.props.notesReducer.notes;
+        console.log(notes);
         return(
             <div className="all-notes-container">
                 <h1>All Notes</h1>
-                <p className="note-count">4 Notes</p>
-                <div className="note-item active">
-                    <p className="note-title">TOA team</p>
-                    <p className="note-content">Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti, excepturi.</p>
-                    <p className="note-date">Oct 6, 2018</p>
-                </div>
-                <div className="note-item">
-                    <p className="note-title">TOA team</p>
-                    <p className="note-content">Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti, excepturi.</p>
-                    <p className="note-date">Oct 6, 2018</p>
-                </div>
-                <div className="note-item">
-                    <p className="note-title">TOA team</p>
-                    <p className="note-content">Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti, excepturi.</p>
-                    <p className="note-date">Oct 6, 2018</p>
-                </div>
-                <div className="note-item">
-                    <p className="note-title">TOA team</p>
-                    <p className="note-content">Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti, excepturi.</p>
-                    <p className="note-date">Oct 6, 2018</p>
-                </div>
+                <p className="note-count">{notes.length + ' Notes'}</p>
+                {
+                    notes.map(note => (
+                        <div className="note-item" key={note._id}>
+                            <p className="note-title">{note.title} - <small className="fa fa-tag">&nbsp;{note.tag}</small></p>
+                            <p className="note-content">{note.content}</p>
+                        </div>
+                    ))
+                }
             </div>
         )
     }
 }
 
-export default AllNote;
+function mapStateToProps(state, props){
+    return{
+        notesReducer: state.noteReducer
+    }
+}
+
+function mapDispatchToProps(dispatch){
+    return {
+        getNotes: (payload)  => dispatch(getNotes(payload))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AllNotes);
+

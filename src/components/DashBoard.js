@@ -6,39 +6,39 @@ import Tags from './Pages/Tags';
 import Trash from './Pages/Trash';
 import SearchResult from './Pages/SearchResults';
 import NotFound from './Pages/NotFound';
-import AllNote from './Pages/AllNotes';
+import AllNotes from './Pages/AllNotes';
 
 import userImg from '../images/icon-1.jpg';
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 
+
 // dependencies của editor
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import { EditorState, convertToRaw } from 'draft-js';
-import { Editor } from 'react-draft-wysiwyg';
-import draftToHtml from 'draftjs-to-html';
+// import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+// import { EditorState, convertToRaw } from 'draft-js';
+// import { Editor } from 'react-draft-wysiwyg';
+// import draftToHtml from 'draftjs-to-html';
 
 class DashBoard extends Component {
     constructor(props) {
         super(props);
+        // this.state = {
+        //     editorState: EditorState.createEmpty()
+        // }
     }
 
-    state = {
-        editorState: EditorState.createEmpty(),
-    }
-
-    onEditorStateChange: Function = (editorState) => {
-        this.setState({
-            editorState,
-        });
-    };
+    // onEditorStateChange = (editorState) => {
+    //     this.setState({
+    //         editorState,
+    //     });
+    // };
 
 
 
 
     render() {
-        const { editorState } = this.state;
+        // const { editorState } = this.state;
         return (
             <Router>
                 <div className="dashboard">
@@ -91,7 +91,7 @@ class DashBoard extends Component {
                         <Switch>
                             <Route exact path='/' component={Home} />
                             <Route path='/create-new-note' component={NewNote} />
-                            <Route path='/all-notes' component={AllNote} />
+                            <Route path='/all-notes' component={AllNotes} />
                             <Route path='/tags' component={Tags} />
                             <Route path='/trash' component={Trash} />
                             <Route path='/search' component={SearchResult} />
@@ -103,8 +103,7 @@ class DashBoard extends Component {
                         <input type="text" placeholder="TOA teams" className="input-name" />
                         <div className="content">
 
-                            {/* WYSIWYG editor */}
-                            <Editor
+                            {/* <Editor
                                 editorState={editorState}
                                 wrapperClassName="demo-wrapper"
                                 editorClassName="demo-editor"
@@ -119,11 +118,10 @@ class DashBoard extends Component {
                                 onEditorStateChange={this.onEditorStateChange}
                             />
 
-                            {/* đoạn này chủ yếu để biết cách lấy value như thế nào thôi */}
                             <textarea
                                 disabled
                                 value={draftToHtml(convertToRaw(editorState.getCurrentContent()))}
-                            />
+                            /> */}
                         </div>
                     </div>
                 </div>
