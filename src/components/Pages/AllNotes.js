@@ -4,7 +4,7 @@ import getNotes from '../../actions/getnotes_action';
 import filterNotes from '../../actions/filternotes_action';
 import { connect } from 'react-redux';
 
-const tags = [];
+const tags = ['All Tags'];
 class AllNotes extends Component{
    
     constructor(props){
@@ -13,8 +13,10 @@ class AllNotes extends Component{
         this.filterNotes = this.filterNotes.bind(this);
     }
 
-    fetchNotes(){
-        axios.get("http://localhost:3001/api/getData")
+    fetchNotes(tag = null){
+        this.props.getNotes({is_busy: true});
+        const url = (tag === null || tag === undefined || tag === 'All Tags') ? 'http://localhost:3001/api/getData' : 'http://localhost:3001/api/getData/tag/' + tag;
+        axios.get(url)
             .then(res => {
                 let notes = res.data;
                 let is_busy = false;
@@ -32,20 +34,17 @@ class AllNotes extends Component{
 
     filterNotes(e){
         e.preventDefault();
-        let props = this.props.notesReducer;
-        let {notes} = props;
         let tag = e.target.dataset.tag;
-        let filters = notes.filter(ele => ele.tag.toLowerCase() === tag.toLowerCase());
-        this.props.filterNotes({is_busy: true, notes: filters});
+        this.fetchNotes(tag);
     }
 
     render(){
         let props = this.props.notesReducer;
         let {notes} = props;
         //let tags = [];
-        if(!tags.length){
+        if(tags.length === 1){
             notes.forEach(element => {
-                if(tags.indexOf(element))   tags.push(element.tag);
+                if(tags.indexOf(element.tag) === -1)   tags.push(element.tag);
             });
         }
 
