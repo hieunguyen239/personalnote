@@ -13,12 +13,32 @@ import userImg from '../images/icon-1.jpg';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 
+// dependencies của editor
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import { EditorState, convertToRaw } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import draftToHtml from 'draftjs-to-html';
+
 class DashBoard extends Component {
     constructor(props) {
         super(props);
     }
 
+    state = {
+        editorState: EditorState.createEmpty(),
+    }
+
+    onEditorStateChange: Function = (editorState) => {
+        this.setState({
+            editorState,
+        });
+    };
+
+
+
+
     render() {
+        const { editorState } = this.state;
         return (
             <Router>
                 <div className="dashboard">
@@ -27,7 +47,7 @@ class DashBoard extends Component {
                             <img src={userImg} />
                             <div className="userName">Nguyen Huynh Thanh Hai</div>
                         </div>
-                        <div class="navbar">
+                        <div className="navbar">
                             <section className="new-note-container">
                                 <NavLink exact to="/create-new-note" activeClassName="selected" >
                                     <div className="nav-item">
@@ -81,7 +101,30 @@ class DashBoard extends Component {
 
                     <div className="main-content">
                         <input type="text" placeholder="TOA teams" className="input-name" />
-                        <p className="content">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque mollitia neque dignissimos? Deleniti fuga fugiat dolorum laborum officia dolore reprehenderit. Saepe unde nulla deserunt autem quas ducimus blanditiis veniam id, laboriosam doloremque consequuntur illum cupiditate eos repellendus eum veritatis odit recusandae incidunt in tempore esse dolor. Dolore tempore recusandae exercitationem rerum doloremque quasi nisi architecto repellat sint vitae officiis eius nemo deserunt unde assumenda, ratione laudantium rem? Temporibus odio debitis assumenda dicta nulla quam, quae vero dignissimos sint? Accusamus fugiat officia possimus mollitia non harum placeat dolores eaque consequuntur dolore quos tempore sint voluptatem dolor magnam deserunt, cupiditate saepe maiores necessitatibus corrupti quaerat voluptas. Natus sint dicta fuga accusantium minima, architecto dolorem laboriosam facere delectus in corporis id odio maiores alias debitis non eos ad tempora eum vero temporibus atque! Commodi, nemo quasi molestiae perferendis inventore doloremque eum sunt provident, illo, saepe totam autem? Voluptatum atque dolorem ratione corporis voluptate.</p>
+                        <div className="content">
+
+                            {/* WYSIWYG editor */}
+                            <Editor
+                                editorState={editorState}
+                                wrapperClassName="demo-wrapper"
+                                editorClassName="demo-editor"
+                                toolbarOnFocus
+                                toolbar={{
+                                    inline: { inDropdown: true },
+                                    list: { inDropdown: true },
+                                    textAlign: { inDropdown: true },
+                                    link: { inDropdown: true },
+                                    history: { inDropdown: true },
+                                }}
+                                onEditorStateChange={this.onEditorStateChange}
+                            />
+
+                            {/* đoạn này chủ yếu để biết cách lấy value như thế nào thôi */}
+                            <textarea
+                                disabled
+                                value={draftToHtml(convertToRaw(editorState.getCurrentContent()))}
+                            />
+                        </div>
                     </div>
                 </div>
             </Router>
