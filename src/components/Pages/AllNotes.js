@@ -1,13 +1,16 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import getNotes from '../../actions/getnotes_action';
+import filterNotes from '../../actions/filternotes_action';
 import { connect } from 'react-redux';
 
+const tags = [];
 class AllNotes extends Component{
-
+   
     constructor(props){
         super(props);
-        this.props.getNotes({is_busy: true});
+        this.showTagList = this.showTagList.bind(this);
+        this.filterNotes = this.filterNotes.bind(this);
     }
 
     fetchNotes(){
@@ -23,13 +26,42 @@ class AllNotes extends Component{
        this.fetchNotes();
     }
 
+    showTagList(e){
+        e.preventDefault();
+    }
+
+    filterNotes(e){
+        e.preventDefault();
+        let props = this.props.notesReducer;
+        let {notes} = props;
+        let tag = e.target.dataset.tag;
+        let filters = notes.filter(ele => ele.tag.toLowerCase() === tag.toLowerCase());
+        this.props.filterNotes({is_busy: true, notes: filters});
+    }
+
     render(){
-        let notes = this.props.notesReducer.notes;
-      
+        let props = this.props.notesReducer;
+        let {notes} = props;
+        //let tags = [];
+        if(!tags.length){
+            notes.forEach(element => {
+                if(tags.indexOf(element))   tags.push(element.tag);
+            });
+        }
+
         return(
             <div className="all-notes-container">
                 <h1>All Notes</h1>
-                <p className="note-count">{notes.length + ' Notes'}</p>
+                <div className="note-count">{notes.length + ' Notes'} 
+                    <a href="#" className="filter-tag-link" onClick={this.showTagList}><i className="fa fa-tag"></i></a>
+                    <ul className="tag-list" aria-expanded="false">
+                        {
+                            tags.map(tag =>(
+                                <li key={tag}><a href="#" onClick={this.filterNotes} data-tag={tag}>{tag}</a></li>
+                            ))
+                        }
+                    </ul>
+                </div>
                 {
                     notes.map(note => (
                         <div className="note-item" key={note._id}>
@@ -51,7 +83,8 @@ function mapStateToProps(state, props){
 
 function mapDispatchToProps(dispatch){
     return {
-        getNotes: (payload)  => dispatch(getNotes(payload))
+        getNotes: (payload)  => dispatch(getNotes(payload)),
+        filterNotes: (payload)  => dispatch(filterNotes(payload))
     }
 }
 
