@@ -1,8 +1,7 @@
-import getNotes from '../actions/getnotes_action';
 import * as type from '../constants/action-types';
 
 const initialState = {
-    is_busy: false,
+    is_busy: true,
     notes: []
 };
 

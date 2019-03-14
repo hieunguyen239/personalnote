@@ -7,29 +7,25 @@ class AllNotes extends Component{
 
     constructor(props){
         super(props);
-    }
-
-    componentWillMount(){
-
+        this.props.getNotes({is_busy: true});
     }
 
     fetchNotes(){
         axios.get("http://localhost:3001/api/getData")
-        .then(res => {
-            let notes = res.data;
-            let is_busy = false;
-            this.props.getNotes({is_busy, notes});
-        });
+            .then(res => {
+                let notes = res.data;
+                let is_busy = false;
+                this.props.getNotes({is_busy, notes});
+            });
     }
 
     componentDidMount(){
        this.fetchNotes();
     }
 
-
     render(){
         let notes = this.props.notesReducer.notes;
-        console.log(notes);
+      
         return(
             <div className="all-notes-container">
                 <h1>All Notes</h1>
