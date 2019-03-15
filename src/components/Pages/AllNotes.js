@@ -21,8 +21,10 @@ class AllNotes extends Component{
         axios.get(url)
             .then(res => {
                 let notes = res.data;
-                let is_busy = false;
-                this.props.getNotes({is_busy, notes});
+                setTimeout(() => {
+                    let is_busy = false;
+                    this.props.getNotes({is_busy, notes});
+                }, 500);
             });
     }
 
