@@ -67,8 +67,12 @@ class AllNotes extends Component{
                 {
                     notes.map(note => (
                         <div className="note-item" key={note._id}>
-                            <p className="note-title">{note.title} - <small className="fa fa-tag"></small>&nbsp;{note.tag}</p>
-                            <p className="note-content">{note.content}</p>
+                            <div className="note-title">{note.title} </div>
+                            <div className="note-content">{note.content}</div>
+                            <div className="note-tag">
+                                <i className="fa fa-tag"></i>&nbsp;{note.tag}
+                            </div>
+
                         </div>
                     ))
                 }
