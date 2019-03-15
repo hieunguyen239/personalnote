@@ -161,6 +161,10 @@ h1 {
             margin-bottom: 15px;
         }
 
+        .note-content:after {
+            content: "...";
+        }
+
         .note-tag {
             color: #c1c1c1;
             font-size: 0.8rem;

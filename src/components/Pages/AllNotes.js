@@ -70,7 +70,7 @@ class AllNotes extends Component{
                     notes.map(note => (
                         <div className="note-item" key={note._id}>
                             <div className="note-title">{note.title} </div>
-                            <div className="note-content">{note.content}</div>
+                            <div className="note-content">{note.content.slice(0, 100)}</div>
                             <div className="note-tag">
                                 <i className="fa fa-tag"></i>&nbsp;{note.tag}
                             </div>
