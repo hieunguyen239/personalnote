@@ -5,12 +5,14 @@ import filterNotes from '../../actions/filternotes_action';
 import { connect } from 'react-redux';
 
 const tags = ['All Tags'];
+
 class AllNotes extends Component{
    
     constructor(props){
         super(props);
         this.showTagList = this.showTagList.bind(this);
         this.filterNotes = this.filterNotes.bind(this);
+        this.state = {hidden: true};
     }
 
     fetchNotes(tag = null){
@@ -30,6 +32,7 @@ class AllNotes extends Component{
 
     showTagList(e){
         e.preventDefault();
+        this.setState({hidden: !this.state.hidden});
     }
 
     filterNotes(e){
@@ -53,18 +56,18 @@ class AllNotes extends Component{
                 <h1>All Notes</h1>
                 <div className="note-count">{notes.length + ' Notes'} 
                     <a href="#" className="filter-tag-link" onClick={this.showTagList}><i className="fa fa-tag"></i></a>
-                    <ul className="tag-list" aria-expanded="false">
-                        {
-                            tags.map(tag =>(
-                                <li key={tag}><a href="#" onClick={this.filterNotes} data-tag={tag}>{tag}</a></li>
-                            ))
-                        }
+                    <ul className={"tag-list" + ((this.state.hidden) ? " hidden" : "")} aria-expanded="false">
+                    {
+                        tags.map(tag =>(
+                            <li className="tag-list-item" key={tag}><a href="#" onClick={this.filterNotes} data-tag={tag}>{tag}</a></li>
+                        ))
+                    }
                     </ul>
                 </div>
                 {
                     notes.map(note => (
                         <div className="note-item" key={note._id}>
-                            <p className="note-title">{note.title} - <small className="fa fa-tag">&nbsp;{note.tag}</small></p>
+                            <p className="note-title">{note.title} - <small className="fa fa-tag"></small>&nbsp;{note.tag}</p>
                             <p className="note-content">{note.content}</p>
                         </div>
                     ))

@@ -153,6 +153,7 @@ h1 {
             color: #000;
             margin-bottom: 10px;
             font-weight: bold;
+            text-transform: capitalize;
         }
 
         .note-content {
@@ -163,6 +164,23 @@ h1 {
         .note-date {
             color: #c1c1c1;
             font-size: 0.8rem;
+        }
+
+        .filter-tag-link {
+            margin-left: 5px;
+        }
+
+        .tag-list {
+            margin-top: 10px;
+        }
+
+        .tag-list-item {
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        .hidden {
+            display: none;
         }
     }
 
