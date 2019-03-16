@@ -10,7 +10,8 @@ class App extends Component {
   render() {
     const props = this.props.noteReducer;
     return (
-      <div className={"App " + ((props.is_busy) ? "loading" : "")}>
+      // <div className={"App " + ((props.is_busy) ? "loading" : "")}>
+      <div className="App">
         <DashBoard />
       </div>
     );

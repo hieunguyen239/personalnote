@@ -1,0 +1,36 @@
+.new-note-wrapper{
+    display: flex;
+    .old-notes-wrapper{
+        flex-basis: 300px;
+    }
+    .editor-class.rdw-editor-main{
+        background-color: #fff;
+        min-height: 300px;
+        padding: 10px 30px;
+    }
+    .create-new-note-wysiswg{
+        padding: 10px 20px;
+        .controls-wrapper{
+            padding: 20px 0;
+            text-align: right;
+        }
+        .btn{
+           @include button;
+        }
+        .input-box{
+            padding: 10px 0;
+            box-sizing: border-box;
+            input{
+                height: 30px;
+                padding: 0 10px;
+                min-width: 300px;
+                width: 100%;
+            }
+            label{
+                display: block;
+                margin: 0 20px 10px 0;
+                font-weight: bold;
+            }
+        }
+    }
+}

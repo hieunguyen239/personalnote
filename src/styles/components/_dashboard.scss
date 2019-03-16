@@ -12,6 +12,9 @@ h1 {
     font-size: 1.5rem;
     padding: 30px 20px 15px 20px;
 }
+*{
+    box-sizing: border-box;
+}
 
 .loading {
     position: fixed;
@@ -121,7 +124,7 @@ h1 {
     }
 
     .right-sidebar {
-        flex: 0 0 300px;
+        //flex: 0 0 300px;
         background-color: #f8f8f8;
 
         .note-count {

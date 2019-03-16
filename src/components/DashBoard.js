@@ -99,11 +99,11 @@ class DashBoard extends Component {
                         </Switch>
                     </div>
 
-                    <div className="main-content">
+                    {/* <div className="main-content">
                         <input type="text" placeholder="TOA teams" className="input-name" />
                         <div className="content">
 
-                            {/* <Editor
+                            <Editor
                                 editorState={editorState}
                                 wrapperClassName="demo-wrapper"
                                 editorClassName="demo-editor"
@@ -121,9 +121,9 @@ class DashBoard extends Component {
                             <textarea
                                 disabled
                                 value={draftToHtml(convertToRaw(editorState.getCurrentContent()))}
-                            /> */}
+                            />
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </Router>
         );

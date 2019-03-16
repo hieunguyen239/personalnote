@@ -17,7 +17,8 @@ class AllNotes extends Component{
 
     fetchNotes(tag = null){
         this.props.getNotes({is_busy: true});
-        const url = (tag === null || tag === undefined || tag === 'All Tags') ? 'http://localhost:3001/api/getData' : 'http://localhost:3001/api/getData/tag/' + tag;
+        const domain = 'http://localhost:3001/';
+        const url = (tag === null || tag === undefined || tag === 'All Tags') ? domain + 'api/getData' : domain + 'api/getData/tag/' + tag;
         axios.get(url)
             .then(res => {
                 let notes = res.data;
