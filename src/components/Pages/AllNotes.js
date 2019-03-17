@@ -4,7 +4,14 @@ import getNotes from '../../actions/getnotes_action';
 import filterNotes from '../../actions/filternotes_action';
 import { connect } from 'react-redux';
 
-const tags = ['All Tags'];
+
+import { EditorState, convertToRaw, ContentState } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
+
+let tags = [];
+const domain = 'http://localhost:3001/';
 
 class AllNotes extends Component{
    
@@ -12,21 +19,37 @@ class AllNotes extends Component{
         super(props);
         this.showTagList = this.showTagList.bind(this);
         this.filterNotes = this.filterNotes.bind(this);
+        this.editNote = this.editNote.bind(this);
         this.state = {hidden: true};
+        this.state = {
+            editorState: EditorState.createEmpty()
+        }
+        //this.saveNote = this.saveNote.bind(this);
+    }
+
+    fetchTags(){
+        const url = domain + 'api/getTags';
+        axios.get(url)
+            .then(res => {
+                tags = res.data;
+                let allTag = {_id: 0, tag_name: 'All Tags'};
+                tags.unshift(allTag);
+            });
     }
 
     fetchNotes(tag = null){
         this.props.getNotes({is_busy: true});
-        const domain = 'http://localhost:3001/';
         const url = (tag === null || tag === undefined || tag === 'All Tags') ? domain + 'api/getData' : domain + 'api/getData/tag/' + tag;
+        this.fetchTags();
         axios.get(url)
             .then(res => {
                 let notes = res.data;
-                setTimeout(() => {
+                //setTimeout(() => {
                     let is_busy = false;
                     this.props.getNotes({is_busy, notes});
-                }, 500);
+                //}, 5000);
             });
+
     }
 
     componentDidMount(){
@@ -44,42 +67,94 @@ class AllNotes extends Component{
         this.fetchNotes(tag);
     }
 
+    onEditorStateChange = (editorState) => {
+        this.setState({
+            editorState,
+        });
+    };
+
+    editNote(e){
+        let props = this.props.notesReducer;
+        e.preventDefault();
+        if(e.currentTarget.className === 'note-item'){
+            let id = e.currentTarget.dataset.id;
+            let {notes} = props;
+            let note = notes.find(ele => id === ele._id);
+            if(note._id){
+                let $frm = document.getElementById('frm-new-note');
+                $frm.elements.title.value = note.title;
+                $frm.elements.content.value = note.content;
+
+                const html = note.content;
+                const contentBlock = htmlToDraft(html);
+                if (contentBlock) {
+                    const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+                    const editorState = EditorState.createWithContent(contentState);
+                    this.onEditorStateChange(editorState);
+                }
+            }
+        }
+    }
+
     render(){
         let props = this.props.notesReducer;
         let {notes} = props;
-        //let tags = [];
-        if(tags.length === 1){
-            notes.forEach(element => {
-                if(tags.indexOf(element.tag) === -1)   tags.push(element.tag);
-            });
-        }
+        const { editorState } = this.state;
 
         return(
-            <div className="all-notes-container">
-                <h1>All Notes</h1>
-                <div className="note-count">{notes.length + ' Notes'} 
-                    <a href="#" className="filter-tag-link" onClick={this.showTagList}><i className="fa fa-tag"></i></a>
-                    <ul className={"tag-list" + ((this.state.hidden) ? " hidden" : "")} aria-expanded="false">
+            <section className="new-note-wrapper">
+                <div className="all-notes-container">
+                    <h1>All Notes</h1>
+                    <div className="note-count">{notes.length + ' Notes'} 
+                        <a href="#" className="filter-tag-link" onClick={this.showTagList}><i className="fa fa-tag"></i></a>
+                        <ul className={"tag-list" + ((this.state.hidden) ? " hidden" : "")} aria-expanded="false">
+                        {
+                            tags.map(tag =>(
+                                <li className="tag-list-item" key={tag._id}><a href="#" onClick={this.filterNotes} data-tag={tag.tag_name}>{tag.tag_name}</a></li>
+                            ))
+                        }
+                        </ul>
+                    </div>
                     {
-                        tags.map(tag =>(
-                            <li className="tag-list-item" key={tag}><a href="#" onClick={this.filterNotes} data-tag={tag}>{tag}</a></li>
+                        notes.map(note => (
+                            <div className="note-item" key={note._id} onClick={this.editNote} data-id={note._id}>
+                                <div className="note-title">{note.title} </div>
+                                <div className="note-content">{note.content.slice(0, 100)}</div>
+                                <div className="note-tag">
+                                    <i className="fa fa-tag"></i>&nbsp;{note.tag}
+                                </div>
+                            </div>
                         ))
                     }
-                    </ul>
                 </div>
-                {
-                    notes.map(note => (
-                        <div className="note-item" key={note._id}>
-                            <div className="note-title">{note.title} </div>
-                            <div className="note-content">{note.content.slice(0, 100)}</div>
-                            <div className="note-tag">
-                                <i className="fa fa-tag"></i>&nbsp;{note.tag}
-                            </div>
-
+                <div className="note-review-container">
+                    <form className="create-new-note-wysiswg"  method="POST" id="frm-new-note" onSubmit={this.saveNote}>
+                        <div className="controls-wrapper">
+                            <input type="submit" value="save" className="btn save" id="save-note" name="save" />
                         </div>
-                    ))
-                }
-            </div>
+                        <div className="input-box">
+                            <label htmlFor="title">Title</label>
+                            <input type="text" id="note-title" name="title"/>
+                        </div>
+                        <div className="input-box">
+                            <label htmlFor="content">Content</label>
+                            <Editor
+                                wrapperClassName="wrapper-class"
+                                editorClassName="editor-class"
+                                toolbarClassName="toolbar-class"
+                                onEditorStateChange={this.onEditorStateChange}
+                                editorState={editorState}
+                            />
+                            <textarea
+                                    disabled
+                                    name="content"
+                                    value={draftToHtml(convertToRaw(editorState.getCurrentContent()))}
+                                    style={{display:'none'}}
+                            />
+                        </div>
+                    </form>
+                </div>
+            </section>
         )
     }
 }
@@ -93,7 +168,7 @@ function mapStateToProps(state, props){
 function mapDispatchToProps(dispatch){
     return {
         getNotes: (payload)  => dispatch(getNotes(payload)),
-        filterNotes: (payload)  => dispatch(filterNotes(payload))
+        filterNotes: (payload)  => dispatch(filterNotes(payload)),
     }
 }
 

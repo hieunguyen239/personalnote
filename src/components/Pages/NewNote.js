@@ -67,7 +67,6 @@ class NewNote extends Component {
         const { editorState } = this.state;
 
         let props = this.props.notesReducer;
-        console.log(props);
         let {notes} = props;
 
         if(tags.length === 1){
@@ -92,7 +91,7 @@ class NewNote extends Component {
                         </div>
                         {
                             notes.map(note => (
-                                <div className="note-item" key={note._id}>
+                                <div className="note-item" key={note._id} data-id={note._id}>
                                     <div className="note-title">{note.title} </div>
                                     <div className="note-content">{note.content.slice(0, 100)}</div>
                                     <div className="note-tag">
