@@ -13,6 +13,9 @@ export default function note_reducer(state = initialState, action){
         case type.FILTER_NOTES:
         return Object.assign({}, state, action.payload);
 
+        case type.UPDATE_NOTE:
+        return Object.assign({}, state, action.payload);
+
         default:
         return state;
     }

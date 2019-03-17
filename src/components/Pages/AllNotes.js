@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import getNotes from '../../actions/getnotes_action';
-import filterNotes from '../../actions/filternotes_action';
 import { connect } from 'react-redux';
+
+import filterNotes from '../../actions/filternotes_action';
+import updateNote from '../../actions/updatenote_action';
 
 
 import { EditorState, convertToRaw, ContentState } from 'draft-js';
@@ -20,11 +22,13 @@ class AllNotes extends Component{
         this.showTagList = this.showTagList.bind(this);
         this.filterNotes = this.filterNotes.bind(this);
         this.editNote = this.editNote.bind(this);
+
         this.state = {hidden: true};
         this.state = {
             editorState: EditorState.createEmpty()
         }
-        //this.saveNote = this.saveNote.bind(this);
+
+        this.saveNote = this.saveNote.bind(this);
     }
 
     fetchTags(){
@@ -84,6 +88,7 @@ class AllNotes extends Component{
                 let $frm = document.getElementById('frm-new-note');
                 $frm.elements.title.value = note.title;
                 $frm.elements.content.value = note.content;
+                $frm.elements.noteid.value = note._id;
 
                 const html = note.content;
                 const contentBlock = htmlToDraft(html);
@@ -94,6 +99,27 @@ class AllNotes extends Component{
                 }
             }
         }
+    }
+
+    saveNoteToDB(data){
+        const domain = 'http://localhost:3001/';
+        const url = domain + 'api/updateData';
+        axios.post(url, data)
+            .then(res => {
+                let data = res.data;
+                if(data.success){
+                    this.fetchNotes();
+                }
+            });
+    }
+
+    saveNote(e){
+        e.preventDefault();
+        let title = (e.target.elements.title.value.trim)() ? e.target.elements.title.value : "No Title";
+        let content = e.target.elements.content.value;
+        let _id = e.target.elements.noteid.value;
+        let data = {id:_id, update:{title, content}};
+        this.saveNoteToDB(data);
     }
 
     render(){
@@ -145,6 +171,7 @@ class AllNotes extends Component{
                                 onEditorStateChange={this.onEditorStateChange}
                                 editorState={editorState}
                             />
+                            <input type="hidden" id="note-id" name="noteid"></input>
                             <textarea
                                     disabled
                                     name="content"
@@ -169,6 +196,7 @@ function mapDispatchToProps(dispatch){
     return {
         getNotes: (payload)  => dispatch(getNotes(payload)),
         filterNotes: (payload)  => dispatch(filterNotes(payload)),
+        updateNote: (payload) => dispatch(updateNote(payload))
     }
 }
 
