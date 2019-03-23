@@ -1,0 +1,22 @@
+.suggest-taglist{
+    padding: 20px;
+    background-color: #fff;
+    width: 100%;
+    li{
+        padding: 5px 0;
+        cursor: pointer;
+        &:hover{
+            background-color: #efefef;
+        }
+    }
+}
+.fake-input{
+    height: 40px;
+    width: 100%;
+    background-color: #fff;
+    cursor: text;
+}
+.tag-choosen{
+    padding: 5px 10px;
+    background-color: #efefef;
+}

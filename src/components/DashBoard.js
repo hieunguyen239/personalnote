@@ -45,7 +45,7 @@ class DashBoard extends Component {
                     <aside className="left-sidebar">
                         <div className="user">
                             <img src={userImg} />
-                            <div className="userName">Nguyen Huynh Thanh Hai</div>
+                            <div className="userName">Username</div>
                         </div>
                         <div className="navbar">
                             <section className="new-note-container">

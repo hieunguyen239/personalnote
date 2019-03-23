@@ -22,10 +22,14 @@ class AllNotes extends Component{
         this.showTagList = this.showTagList.bind(this);
         this.filterNotes = this.filterNotes.bind(this);
         this.editNote = this.editNote.bind(this);
+        this.filterSuggestTag = this.filterSuggestTag.bind(this);
+        this.showSuggestTag = this.showSuggestTag.bind(this);
+        this.setTag = this.setTag.bind(this);
 
-        this.state = {hidden: true};
         this.state = {
-            editorState: EditorState.createEmpty()
+            editorState: EditorState.createEmpty(),
+            hidden: true, 
+            filteredTags: []
         }
 
         this.saveNote = this.saveNote.bind(this);
@@ -58,6 +62,9 @@ class AllNotes extends Component{
 
     componentDidMount(){
        this.fetchNotes();
+       this.setState({
+            filteredTags: tags
+        });
     }
 
     showTagList(e){
@@ -122,11 +129,44 @@ class AllNotes extends Component{
         this.saveNoteToDB(data);
     }
 
+    showSuggestTag(e){
+
+    }
+
+    setTag(e){
+        const name = e.target.dataset.name
+        const $input = document.getElementById('tag-input');
+        $input.value = name;
+
+        const $tagList = document.getElementById('suggest-taglist');
+
+        const display = $tagList.style.display;
+        if(display === 'block')  $tagList.style.display = 'none';
+
+        const $fakeInp = document.getElementById('fake-input');
+
+        const span = `<span class="tag-choosen">${name}</span>`;
+        $fakeInp.innerHTML = span;
+    }
+
+    filterSuggestTag(e){
+        const inputVal = e.target.value;
+        const $tagList = document.getElementById('suggest-taglist');
+
+        const display = $tagList.style.display;
+        if(display === 'none')  $tagList.style.display = 'block';
+
+        const filteredTags = tags.filter((tag) => tag.tag_name.toLowerCase().includes(inputVal.toLowerCase()));
+        this.setState({
+            filteredTags
+        });
+    }
+
     render(){
         let props = this.props.notesReducer;
         let {notes} = props;
         const { editorState } = this.state;
-
+        
         return(
             <section className="new-note-wrapper">
                 <div className="all-notes-container">
@@ -178,6 +218,22 @@ class AllNotes extends Component{
                                     value={draftToHtml(convertToRaw(editorState.getCurrentContent()))}
                                     style={{display:'none'}}
                             />
+                        </div>
+                        <div className="input-box">
+                            <div className="tags-con">
+                                <label htmlFor="tags">Tags</label>
+                                <div className="tag-autosuggest-con">
+                                    <div className="fake-input" contenteditable="true" id="fake-input"></div>
+                                    <input type="text" id="tag-input" name="tagInput" onKeyUp={this.filterSuggestTag} onClick={this.showSuggestTag} autocomplete="off"/>
+                                    <ul className="suggest-taglist" id="suggest-taglist" style={{display:'none'}}>
+                                        {
+                                            this.state.filteredTags.map(tag => (
+                                                <li key={tag._id} onClick={this.setTag} data-name={tag.tag_name}>{tag.tag_name}</li>
+                                            ))
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
