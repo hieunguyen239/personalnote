@@ -16,6 +16,10 @@ h1 {
     box-sizing: border-box;
 }
 
+*:focus{
+    outline: none;
+}
+
 .loading {
     position: fixed;
     overflow: hidden;

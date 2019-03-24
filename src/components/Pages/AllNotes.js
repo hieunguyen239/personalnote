@@ -92,6 +92,7 @@ class AllNotes extends Component{
             let {notes} = props;
             let note = notes.find(ele => id === ele._id);
             if(note._id){
+                
                 let $frm = document.getElementById('frm-new-note');
                 $frm.elements.title.value = note.title;
                 $frm.elements.content.value = note.content;
@@ -104,6 +105,8 @@ class AllNotes extends Component{
                     const editorState = EditorState.createWithContent(contentState);
                     this.onEditorStateChange(editorState);
                 }
+               
+                this._setTag(e.currentTarget.dataset.tag);
             }
         }
     }
@@ -125,7 +128,8 @@ class AllNotes extends Component{
         let title = (e.target.elements.title.value.trim)() ? e.target.elements.title.value : "No Title";
         let content = e.target.elements.content.value;
         let _id = e.target.elements.noteid.value;
-        let data = {id:_id, update:{title, content}};
+        let tag = e.target.elements.tagInput.value;
+        let data = {id:_id, update:{title, content, tag}};
         this.saveNoteToDB(data);
     }
 
@@ -133,8 +137,7 @@ class AllNotes extends Component{
 
     }
 
-    setTag(e){
-        const name = e.target.dataset.name
+    _setTag(name){
         const $input = document.getElementById('tag-input');
         $input.value = name;
 
@@ -145,12 +148,47 @@ class AllNotes extends Component{
 
         const $fakeInp = document.getElementById('fake-input');
 
-        const span = `<span class="tag-choosen">${name}</span>`;
-        $fakeInp.innerHTML = span;
+        $fakeInp.classList.remove('editable');        
+        const $spanTag = document.createElement('span');
+        $spanTag.classList.add('tag-choosen');
+        $fakeInp.innerText = '';
+        $spanTag.innerText = name;
+
+        const $rmTag = document.createElement('span');
+        $rmTag.classList.add('remove-tag');
+        $rmTag.innerText = 'x';
+        $spanTag.appendChild($rmTag);
+
+        $fakeInp.contentEditable = 'false';
+
+        $rmTag.addEventListener('click', (e) => {
+            $fakeInp.classList.add('editable'); 
+            $input.value = '';
+            $fakeInp.innerText = '';
+            $fakeInp.contentEditable = 'true';
+        });
+
+        $fakeInp.appendChild($spanTag);
+    }
+
+    setTag(e){
+        const name = e.target.dataset.name
+        this._setTag(name);
     }
 
     filterSuggestTag(e){
-        const inputVal = e.target.value;
+        /* const inputVal = e.target.value;
+        const $tagList = document.getElementById('suggest-taglist');
+
+        const display = $tagList.style.display;
+        if(display === 'none')  $tagList.style.display = 'block';
+
+        const filteredTags = tags.filter((tag) => tag.tag_name.toLowerCase().includes(inputVal.toLowerCase()));
+        this.setState({
+            filteredTags
+        }); */
+
+        const inputVal = e.target.innerHTML;
         const $tagList = document.getElementById('suggest-taglist');
 
         const display = $tagList.style.display;
@@ -183,7 +221,7 @@ class AllNotes extends Component{
                     </div>
                     {
                         notes.map(note => (
-                            <div className="note-item" key={note._id} onClick={this.editNote} data-id={note._id}>
+                            <div className="note-item" key={note._id} onClick={this.editNote} data-tag={note.tag} data-id={note._id}>
                                 <div className="note-title">{note.title} </div>
                                 <div className="note-content">{note.content.slice(0, 100)}</div>
                                 <div className="note-tag">
@@ -223,7 +261,7 @@ class AllNotes extends Component{
                             <div className="tags-con">
                                 <label htmlFor="tags">Tags</label>
                                 <div className="tag-autosuggest-con">
-                                    <div className="fake-input" contenteditable="true" id="fake-input"></div>
+                                    <div className="fake-input editable" contenteditable="true" id="fake-input" onKeyUp={this.filterSuggestTag}></div>
                                     <input type="text" id="tag-input" name="tagInput" onKeyUp={this.filterSuggestTag} onClick={this.showSuggestTag} autocomplete="off"/>
                                     <ul className="suggest-taglist" id="suggest-taglist" style={{display:'none'}}>
                                         {
